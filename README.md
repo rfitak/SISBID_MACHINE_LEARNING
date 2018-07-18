@@ -10,3 +10,7 @@ Notes and R code
 - can covariates be combined - discrete (and/or ordered) and continuous data
 - too many covariates results in overfitting
 - when p = n, or p > n, overfitting is almost guanteed
+    - overfitting results from degrees of freedom...
+- more difficult to design how many samples are needed, no p-values, or concepts of power
+
+
