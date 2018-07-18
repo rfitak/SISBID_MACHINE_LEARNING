@@ -41,9 +41,55 @@ persp(x,y,fa,theta=30,phi=40)
 # 'identifiy'
 identify(horsepower,mpg,name)
 # Allows you to click on points on a plot to identify the particular point.  Use CNTRL+click to quit.
+
+# 'fix' command allows one to make small changes in a table!
+fix(data)
 ```
+
 Regression vs classification
 - Regression - predict a quantitative or continuous response
 - classification - predict a categorical response
 - the Beta coefficients must be linear!  We can transform covariates as needed
+- classical way to fit a model is to minimize the sum (across samples, n) of the least squares
 
+Least squares in R Lab
+```R
+library(MASS)
+library(ISLR)
+
+# Simple Linear Regression
+fix(Boston)
+names(Boston)
+lm.fit=lm(medv~lstat,data=Boston)
+
+# or ...
+attach(Boston)
+lm.fit=lm(medv~lstat)
+
+# Continue
+lm.fit
+summary(lm.fit)
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+
+# Predict - give new data and get new values (confidence or prediction interval)
+predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="confidence")
+predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="prediction")
+plot(lstat,medv)
+abline(lm.fit, lwd = 3, col = "red")
+plot(lstat,medv,col="red")
+plot(lstat,medv,pch=20)
+
+# Plot with custom 'pch' character
+plot(lstat,medv,pch="+")
+plot(1:20,1:20,pch=1:20)
+
+# Multiple plots
+par(mfrow=c(2,2))
+plot(lm.fit)
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
