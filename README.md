@@ -165,7 +165,24 @@ trainerr <- c(trainerr, mean((xtr[,1:i]%*%beta+intercept - ytr)^2))
 testerr <- c(testerr, mean((xte[,1:i]%*%beta+intercept - yte)^2))
 }
 par(mfrow=c(1,3))
-plot(2:100,rsq, xlab=’Number of Variables’, ylab="R Squared", log="y") abline(v=10,col="red")
-plot(2:100,trainerr, xlab=’Number of Variables’, ylab="Training Error",log="y") abline(v=10,col="red")
-plot(2:100,testerr, xlab=’Number of Variables’, ylab="Test Error",log="y") abline(v=10,col="red")
+plot(2:100,rsq, xlab='Number of Variables', ylab="R Squared", log="y"); abline(v=10,col="red")
+plot(2:100,trainerr, xlab='Number of Variables’', ylab="Training Error",log="y"); abline(v=10,col="red")
+plot(2:100,testerr, xlab='Number of Variables', ylab="Test Error",log="y"); abline(v=10,col="red")
 ```
+
+Bias and variance tradeoff
+- bias is the difference between the true beta and the estimated (predicted) beta
+  - the bias decreases with each added variable
+  - but the variance in estimated betas keeps increasing across different experiments
+  - Test Error = Bias^2 + Variance
+
+How to split data into training and test data?
+- our goal is to estimate test error
+  - simply split into a validation set
+    - be careful to split before the validation set can be used for anything! Set it aside first!
+    - choose the number of covariates that minimizes the test/validation set error.
+  - leave-one out cross-validation
+    - repeat fit many times, and use n-1 for training, and the remaining sample as the validation data
+    - the sum of the errors for each sample when used as the validation sample is the CV error
+    - this estimates the optimal complexity (number of covariates), which afterwards the full dataset will be refitted with this new number of covariates
+  - K-fold cross-validation
