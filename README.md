@@ -14,7 +14,7 @@ Notes and R code
 - more difficult to design how many samples are needed, no p-values, or concepts of power
 - unsupervised learning occurs for clustering or dimensionality reduction, Y is unknown
 
-```
+```R
 # The R 'outer', 'contour', and 'image' function
 x=seq(-pi,pi,length=50)
 y=x
@@ -42,4 +42,8 @@ persp(x,y,fa,theta=30,phi=40)
 identify(horsepower,mpg,name)
 # Allows you to click on points on a plot to identify the particular point.  Use CNTRL+click to quit.
 ```
+Regression vs classification
+- Regression - predict a quantitative or continuous response
+- classification - predict a categorical response
+- the Beta coefficients must be linear!  We can transform covariates as needed
 
