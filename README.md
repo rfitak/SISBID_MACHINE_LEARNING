@@ -135,3 +135,12 @@ LoadLibraries=function(){
  }
 LoadLibraries()
 ```
+
+- Least squares regression uses training observations (training data/set)
+- training error - residuals - how well does our model fit the training data
+    - training error can be measured using MSE (mean squared error)
+    - this is similar to the R^2 (proportion of explained variance)
+    - MSE and R^2 always improve with more covariates
+    - if you give me infinite covariates, no matter how crazy (or nonsensical), I can get a perfect fit
+      - but in this case it wont work well outside of the training set
+    
