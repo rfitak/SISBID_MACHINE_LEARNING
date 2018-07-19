@@ -327,7 +327,7 @@ mod <- lm(ytr ~ xtr[, whichers])
 print(summary(mod))
 ```
 - each fold gives a different set of *q* features
--# ONLY PRESELECT Q FROM CORRELATIONS WITH TRAINING DATA AND NOT FULL DATA
+- ONLY PRESELECT Q FROM CORRELATIONS WITH TRAINING DATA AND NOT FULL DATA
 
 
 
