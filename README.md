@@ -382,13 +382,13 @@ plot(reg.summary$cp, xlab = "Number of Variables", ylab = "Cp", type = 'l')
 which.min(reg.summary$cp)
 points(10, reg.summary$cp[10], col = "red", cex = 2, pch = 20)
 which.min(reg.summary$bic)
-plot(reg.summary$bic,xlab="Number of Variables",ylab="BIC",type='l')
-points(6,reg.summary$bic[6],col="red",cex=2,pch=20)
-plot(regfit.full,scale="r2")
-plot(regfit.full,scale="adjr2")
-plot(regfit.full,scale="Cp")
-plot(regfit.full,scale="bic")
-coef(regfit.full,6)
+plot(reg.summary$bic, xlab = "Number of Variables", ylab = "BIC", type = 'l')
+points(6, reg.summary$bic[6], col = "red", cex = 2, pch = 20)
+plot(regfit.full, scale = "r2")
+plot(regfit.full, scale = "adjr2")
+plot(regfit.full, scale = "Cp")
+plot(regfit.full, scale = "bic")
+coef(regfit.full, 6)
 
 # Forward and Backward Stepwise Selection
 regfit.fwd = regsubsets(Salary ~ ., data = Hitters, nvmax = 19, method = "forward")
@@ -401,45 +401,45 @@ coef(regfit.bwd, 7)
 
 # Choosing Among Models
 set.seed(1)
-train=sample(c(TRUE,FALSE), nrow(Hitters),rep=TRUE)
-test=(!train)
-regfit.best=regsubsets(Salary~.,data=Hitters[train,],nvmax=19)
-test.mat=model.matrix(Salary~.,data=Hitters[test,])
-val.errors=rep(NA,19)
+train = sample(c(TRUE, FALSE), nrow(Hitters), rep = TRUE)
+test = (!train)
+regfit.best = regsubsets(Salary ~ ., data = Hitters[train,], nvmax = 19)
+test.mat = model.matrix(Salary ~ ., data = Hitters[test, ])
+val.errors = rep(NA, 19)
 for(i in 1:19){
-   coefi=coef(regfit.best,id=i)
-   pred=test.mat[,names(coefi)]%*%coefi
-   val.errors[i]=mean((Hitters$Salary[test]-pred)^2)
+   coefi = coef(regfit.best, id = i)
+   pred = test.mat[, names(coefi)]%*%coefi
+   val.errors[i] = mean((Hitters$Salary[test] - pred)^2)
 }
 val.errors
 which.min(val.errors)
-coef(regfit.best,10)
-predict.regsubsets=function(object,newdata,id,...){
-  form=as.formula(object$call[[2]])
-  mat=model.matrix(form,newdata)
-  coefi=coef(object,id=id)
-  xvars=names(coefi)
-  mat[,xvars]%*%coefi
+coef(regfit.best, 10)
+predict.regsubsets = function(object, newdata, id, ...){
+  form = as.formula(object$call[[2]])
+  mat = model.matrix(form, newdata)
+  coefi = coef(object, id = id)
+  xvars = names(coefi)
+  mat[, xvars]%*%coefi
   }
-regfit.best=regsubsets(Salary~.,data=Hitters,nvmax=19)
-coef(regfit.best,10)
-k=10
+regfit.best = regsubsets(Salary ~ ., data = Hitters, nvmax = 19)
+coef(regfit.best, 10)
+k = 10
 set.seed(1)
-folds=sample(1:k,nrow(Hitters),replace=TRUE)
-cv.errors=matrix(NA,k,19, dimnames=list(NULL, paste(1:19)))
+folds = sample(1:k, nrow(Hitters), replace = TRUE)
+cv.errors = matrix(NA, k, 19, dimnames = list(NULL, paste(1:19)))
 for(j in 1:k){
-  best.fit=regsubsets(Salary~.,data=Hitters[folds!=j,],nvmax=19)
+  best.fit = regsubsets(Salary ~ ., data = Hitters[folds != j, ], nvmax = 19)
   for(i in 1:19){
-    pred=predict(best.fit,Hitters[folds==j,],id=i)
-    cv.errors[j,i]=mean( (Hitters$Salary[folds==j]-pred)^2)
+    pred = predict(best.fit, Hitters[folds == j, ], id = i)
+    cv.errors[j, i] = mean((Hitters$Salary[folds == j] - pred)^2)
     }
   }
-mean.cv.errors=apply(cv.errors,2,mean)
+mean.cv.errors = apply(cv.errors, 2, mean)
 mean.cv.errors
-par(mfrow=c(1,1))
-plot(mean.cv.errors,type='b')
-reg.best=regsubsets(Salary~.,data=Hitters, nvmax=19)
-coef(reg.best,11)
+par(mfrow = c(1, 1))
+plot(mean.cv.errors, type = 'b')
+reg.best = regsubsets(Salary ~ ., data = Hitters, nvmax = 19)
+coef(reg.best, 11)
 ```
 - problem with backward selection is that you cannot fit a model with more features than observations
 - __Ridge__ and __Lasso__ regression control complexity by NOT using least squares and instead by shrinking the regressino coefficients
@@ -490,16 +490,16 @@ cat("Number of Zero Coefficients", sum(abs(coef(cv.out)) < 1e-8), fill = TRUE)
 ```
 ```R
 # Chapter 6 Lab 2: Ridge Regression and the Lasso
-x=model.matrix(Salary~.,Hitters)[,-1]
-y=Hitters$Salary
+x = model.matrix(Salary ~ ., Hitters)[, -1]
+y = Hitters$Salary
 
 # Ridge Regression
 library(glmnet)
-grid=10^seq(10,-2,length=100)
-ridge.mod=glmnet(x,y,alpha=0,lambda=grid)
+grid = 10^seq(10, -2, length = 100)
+ridge.mod = glmnet(x, y, alpha = 0, lambda = grid)
 dim(coef(ridge.mod))
 ridge.mod$lambda[50]
-coef(ridge.mod)[,50]
+coef(ridge.mod)[, 50]
 sqrt(sum(coef(ridge.mod)[-1,50]^2)) # a measure of model complexity
 ridge.mod$lambda[60]
 coef(ridge.mod)[,60]
@@ -544,3 +544,13 @@ lasso.coef
 lasso.coef[lasso.coef!=0]
 ```
 
+- __Principle components regression__
+  - finds a low-dimensional subspace of the data and then fits a model on that low-dimensional subspace, using least squares
+  - make new lower dimensional datasets
+  - do principle components (PC) on X, then do least squares on the principle components
+  - each new PC is orthagonal (i.e., independent) to one another
+  - use cross valdiation to choose M (the number of PCs to consider
+  - use the line that best represents each PC
+  - the last PC is already defined as whats left (no accounted for by the first p-1 PC)
+  - doesn't do variable selection - all original predictors are included
+  - coefficients are really connected to the interpretation, but still good at prediction
