@@ -582,3 +582,4 @@ mean((pcr.pred - y.test)^2)
 pcr.fit = pcr(y ~ x, scale = TRUE, ncomp = 7)
 summary(pcr.fit)
 ```
+- see Zhuang et al., BMC Bioinformatics, 2012 for a good example
