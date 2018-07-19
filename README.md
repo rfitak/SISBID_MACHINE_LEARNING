@@ -506,10 +506,10 @@ coef(ridge.mod)[,60]
 sqrt(sum(coef(ridge.mod)[-1,60]^2)) # as penalty decreases, complexity increases
 predict(ridge.mod,s=50,type="coefficients")[1:20,]
 set.seed(1)
-train=sample(1:nrow(x), nrow(x)/2)
-test=(-train)
-y.test=y[test]
-ridge.mod=glmnet(x[train,],y[train],alpha=0,lambda=grid, thresh=1e-12)
+train = sample(1:nrow(x), nrow(x) / 2)
+test = (-train)
+y.test = y[test]
+ridge.mod = glmnet(x[train, ], y[train], alpha = 0, lambda = grid, thresh = 1e-12)
 ridge.pred=predict(ridge.mod,s=4,newx=x[test,]) # s=4 means a lambda of 4
 mean((ridge.pred-y.test)^2)
 mean((mean(y[train])-y.test)^2)
@@ -530,18 +530,18 @@ out=glmnet(x,y,alpha=0)
 predict(out,type="coefficients",s=bestlam)[1:20,]
 
 # The Lasso
-lasso.mod=glmnet(x[train,],y[train],alpha=1,lambda=grid)
+lasso.mod = glmnet(x[train, ], y[train], alpha = 1, lambda = grid)
 plot(lasso.mod)
 set.seed(1)
-cv.out=cv.glmnet(x[train,],y[train],alpha=1)
+cv.out = cv.glmnet(x[train,],y[train],alpha=1)
 plot(cv.out)
-bestlam=cv.out$lambda.min
-lasso.pred=predict(lasso.mod,s=bestlam,newx=x[test,])
-mean((lasso.pred-y.test)^2)
-out=glmnet(x,y,alpha=1,lambda=grid)
-lasso.coef=predict(out,type="coefficients",s=bestlam)[1:20,]
+bestlam = cv.out$lambda.min
+lasso.pred = predict(lasso.mod, s= bestlam, newx = x[test, ])
+mean((lasso.pred - y.test)^2)
+out = glmnet(x, y, alpha = 1, lambda = grid)
+lasso.coef = predict(out, type = "coefficients", s = bestlam)[1:20, ]
 lasso.coef
-lasso.coef[lasso.coef!=0]
+lasso.coef[lasso.coef! = 0]
 ```
 
 - __Principle components regression__
@@ -554,3 +554,31 @@ lasso.coef[lasso.coef!=0]
   - the last PC is already defined as whats left (no accounted for by the first p-1 PC)
   - doesn't do variable selection - all original predictors are included
   - coefficients are really connected to the interpretation, but still good at prediction
+
+```R
+# PC Regression using the PLS package
+xtr <- matrix(rnorm(100 * 100), ncol = 100)
+beta <- c(rep(1, 10), rep(0, 90))
+ytr <- xtr%*%beta + rnorm(100)
+library(pls)
+out <- pcr(ytr ~ xtr, scale = TRUE, validation = "CV")
+summary(out)
+validationplot(out, val.type = "MSEP")
+
+# or
+# Principal Components Regression
+library(pls)
+set.seed(2)
+pcr.fit = pcr(Salary ~ ., data = Hitters, scale = TRUE, validation = "CV")
+summary(pcr.fit)
+validationplot(pcr.fit, val.type = "MSEP")
+
+# Now fit using jus the training data
+set.seed(1)
+pcr.fit = pcr(Salary ~ ., data = Hitters, subset = train, scale = TRUE, validation = "CV")
+validationplot(pcr.fit, val.type = "MSEP")
+pcr.pred = predict(pcr.fit, x[test, ], ncomp = 7)
+mean((pcr.pred - y.test)^2)
+pcr.fit = pcr(y ~ x, scale = TRUE, ncomp = 7)
+summary(pcr.fit)
+```
