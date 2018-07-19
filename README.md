@@ -583,3 +583,23 @@ pcr.fit = pcr(y ~ x, scale = TRUE, ncomp = 7)
 summary(pcr.fit)
 ```
 - see Zhuang et al., BMC Bioinformatics, 2012 for a good example
+
+### Classification
+- predicting a categorical or qualitative response
+  - e.g., cancer vs normal
+  - e.g., tumor type 1 vs tumor type 2 vs tumor type 3
+  - most commonly encountered in biomedical applications
+  - often unordered categories
+  - interested in the probability of belonging to each category
+- we will discuss
+  - k-nearest neighbors (KNN)
+    - non-parametric, just look at the neighbors.  Model-free approach
+    - *k* is the tuning parameter, chosen by Cross-Validation
+    - results in a 'decision boundary' (see plots)
+    - as k becomes larger, themodel become less complex
+    - works when p is small... do not use in high dimensions!
+      - could do a PC reduction first then try KNN
+      - however, this requires two training parameters
+  - logistic regression
+  - support vector machines (SVM)
+  
