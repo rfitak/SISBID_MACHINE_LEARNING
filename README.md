@@ -293,9 +293,41 @@ set.seed(1)
 boot(Auto, boot.fn, 1000)
 summary(lm(mpg ~ horsepower + I(horsepower^2), data = Auto))$coef
 ```
+- in high dimensional data, we need to fit a less complex model (i.e., fewer variables)
+- we use alternatives to least squares that allow us to choose the level of complexity:
+  - variable pre-selection
+  - forward stepwise regression
+  - ridge regressio 
+  - lasso regression
+  - Principle components regression
+- we select the complexity using a CV approach
+- We need 'signal' variables and not 'noise' variables
+- "Common mistakes are simple, and simple mistakes are common."
+- for CV, split on independent units and not necessarily 'observations'
 
+### High Dimensional data
+- We want to make sure we do well in future test data
+- we will accept some bias in order to reduce variance
+- Variable pre-selection
+  - choose a smaller set of *q* variables that are most correlated with the response
+  - use least ssquares on a model with these q variables
+    - simple and straightforward
+```R
+# Build toy data
+xtr <- matrix(rnorm(100 * 100), ncol = 100)
+beta <- c(rep(1, 10), rep(0, 90))
+ytr <- xtr%*%beta + rnorm(100) # matrix multiplication
 
+# Do correlations
+cors <- cor(xtr, ytr)
 
+# Select correlations that are good and build model
+whichers <- which(abs(cors) > 0.2)
+mod <- lm(ytr ~ xtr[, whichers])
+print(summary(mod))
+```
+- each fold gives a different set of *q* features
+-# ONLY PRESELECT Q FROM CORRELATIONS WITH TRAINING DATA AND NOT FULL DATA
 
 
 
