@@ -473,6 +473,74 @@ sum(abs(coef(cv.out)) < 1e-8), fill = TRUE)
   - for lasso or ridge, all coefficients need to be standardized!!!! (performed by the glmnet package)
   - don't penalize the intercept
 - penalized regressions also have only a single, global minimum, no local minima.
+```R
+# Lasso code - similar to ridge regression code
+xtr <- matrix(rnorm(100 * 100), ncol = 100)
+beta <- c(rep(1, 10), rep(0, 90))
+ytr <- xtr%*%beta + rnorm(100)
+library(glmnet)
+cv.out <- cv.glmnet(xtr, ytr, alpha = 1, nfolds = 5)
+print(cv.out$cvm)
+plot(cv.out)
+cat("CV Errors", cv.out$cvm, fill = TRUE)
+cat("Lambda with smallest CV Error",
+cv.out$lambda[which.min(cv.out$cvm)], fill = TRUE)
+cat("Coefficients", as.numeric(coef(cv.out)), fill = TRUE)
+cat("Number of Zero Coefficients", sum(abs(coef(cv.out)) < 1e-8), fill = TRUE)
+```
+```R
+# Chapter 6 Lab 2: Ridge Regression and the Lasso
+x=model.matrix(Salary~.,Hitters)[,-1]
+y=Hitters$Salary
 
+# Ridge Regression
+library(glmnet)
+grid=10^seq(10,-2,length=100)
+ridge.mod=glmnet(x,y,alpha=0,lambda=grid)
+dim(coef(ridge.mod))
+ridge.mod$lambda[50]
+coef(ridge.mod)[,50]
+sqrt(sum(coef(ridge.mod)[-1,50]^2)) # a measure of model complexity
+ridge.mod$lambda[60]
+coef(ridge.mod)[,60]
+sqrt(sum(coef(ridge.mod)[-1,60]^2)) # as penalty decreases, complexity increases
+predict(ridge.mod,s=50,type="coefficients")[1:20,]
+set.seed(1)
+train=sample(1:nrow(x), nrow(x)/2)
+test=(-train)
+y.test=y[test]
+ridge.mod=glmnet(x[train,],y[train],alpha=0,lambda=grid, thresh=1e-12)
+ridge.pred=predict(ridge.mod,s=4,newx=x[test,]) # s=4 means a lambda of 4
+mean((ridge.pred-y.test)^2)
+mean((mean(y[train])-y.test)^2)
+ridge.pred=predict(ridge.mod,s=1e10,newx=x[test,]) #get large lambda value, which removes almost all coefficents, so result should be similar to the intercept model above
+mean((ridge.pred-y.test)^2)
+ridge.pred=predict(ridge.mod,s=0,newx=x[test,],exact=T) # becomes least squares model
+mean((ridge.pred-y.test)^2)
+lm(y~x, subset=train)
+predict(ridge.mod,s=0,exact=T,type="coefficients")[1:20,]
+set.seed(1)
+cv.out=cv.glmnet(x[train,],y[train],alpha=0)
+plot(cv.out)
+bestlam=cv.out$lambda.min
+bestlam
+ridge.pred=predict(ridge.mod,s=bestlam,newx=x[test,])
+mean((ridge.pred-y.test)^2)
+out=glmnet(x,y,alpha=0)
+predict(out,type="coefficients",s=bestlam)[1:20,]
 
+# The Lasso
+lasso.mod=glmnet(x[train,],y[train],alpha=1,lambda=grid)
+plot(lasso.mod)
+set.seed(1)
+cv.out=cv.glmnet(x[train,],y[train],alpha=1)
+plot(cv.out)
+bestlam=cv.out$lambda.min
+lasso.pred=predict(lasso.mod,s=bestlam,newx=x[test,])
+mean((lasso.pred-y.test)^2)
+out=glmnet(x,y,alpha=1,lambda=grid)
+lasso.coef=predict(out,type="coefficients",s=bestlam)[1:20,]
+lasso.coef
+lasso.coef[lasso.coef!=0]
+```
 
