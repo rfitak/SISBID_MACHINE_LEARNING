@@ -692,9 +692,23 @@ lasso.pred = predict(lasso.cv, newx = xts, s = lasso.cv$lambda.1se, type = "resp
 lasso.pred01 = as.factor(1*(lasso.pred > 0.5))
 table(lasso.pred01, yts)
 mean(lasso.pred01 == yts)
-
-
+```
+```R
+# K-Nearest Neighbors
+library(class)
+train.X=cbind(Lag1,Lag2)[train,]
+test.X=cbind(Lag1,Lag2)[!train,]
+train.Direction=Direction[train]
+set.seed(1)
+knn.pred=knn(train.X,test.X,train.Direction,k=1)
+table(knn.pred,Direction.2005)
+(83+43)/252
+knn.pred=knn(train.X,test.X,train.Direction,k=3)
+table(knn.pred,Direction.2005)
+mean(knn.pred==Direction.2005)
 
 ```
+- discriminant analyses work especially well with >2 categories
+
   - support vector machines (SVM)
   
