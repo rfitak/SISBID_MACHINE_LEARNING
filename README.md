@@ -16,30 +16,30 @@ Notes and R code
 
 ```R
 # The R 'outer', 'contour', and 'image' function
-x=seq(-pi,pi,length=50)
-y=x
+x = seq(-pi, pi, length = 50)
+y = x
 
 # Makes a new number from each combiantion of X and Y
-f=outer(x,y,function(x,y)cos(y)/(1+x^2))
+f = outer(x, y, function(x, y)cos(y) / (1 + x^2))
 
 # Contour plot - like a topo map
-contour(x,y,f)
-contour(x,y,f,nlevels=45,add=T)
-fa=(f-t(f))/2
-contour(x,y,fa,nlevels=15)
+contour(x, y, f)
+contour(x, y, f, nlevels = 45, add = T)
+fa = (f - t(f)) / 2
+contour(x, y, fa, nlevels = 15)
 
 # Image produce a plot similar to a heatmap
-image(x,y,fa)
+image(x, y, fa)
 
 # 3D plot of same data
-persp(x,y,fa)
-persp(x,y,fa,theta=30)
-persp(x,y,fa,theta=30,phi=20)
-persp(x,y,fa,theta=30,phi=70)
-persp(x,y,fa,theta=30,phi=40)
+persp(x, y, fa)
+persp(x, y, fa, theta = 30)
+persp(x, y, fa, theta = 30, phi = 20)
+persp(x, y, fa, theta = 30, phi = 70)
+persp(x, y, fa, theta = 30, phi = 40)
 
 # 'identifiy'
-identify(horsepower,mpg,name)
+identify(horsepower, mpg, name)
 # Allows you to click on points on a plot to identify the particular point.  Use CNTRL+click to quit.
 
 # 'fix' command allows one to make small changes in a table!
@@ -60,11 +60,11 @@ library(ISLR)
 # Simple Linear Regression
 fix(Boston)
 names(Boston)
-lm.fit=lm(medv~lstat,data=Boston)
+lm.fit = lm(medv ~ lstat, data = Boston)
 
 # or ...
 attach(Boston)
-lm.fit=lm(medv~lstat)
+lm.fit = lm(medv ~ lstat)
 
 # Continue
 lm.fit
@@ -74,19 +74,19 @@ coef(lm.fit)
 confint(lm.fit)
 
 # Predict - give new data and get new values (confidence or prediction interval)
-predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="confidence")
-predict(lm.fit,data.frame(lstat=(c(5,10,15))), interval="prediction")
-plot(lstat,medv)
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "prediction")
+plot(lstat, medv)
 abline(lm.fit, lwd = 3, col = "red")
-plot(lstat,medv,col="red")
-plot(lstat,medv,pch=20)
+plot(lstat, medv, col = "red")
+plot(lstat, medv, pch = 20)
 
 # Plot with custom 'pch' character
-plot(lstat,medv,pch="+")
-plot(1:20,1:20,pch=1:20)
+plot(lstat, medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
 
 # Multiple plots
-par(mfrow=c(2,2))
+par(mfrow = c(2, 2))
 plot(lm.fit)
 plot(predict(lm.fit), residuals(lm.fit))
 plot(predict(lm.fit), rstudent(lm.fit))
@@ -94,41 +94,41 @@ plot(hatvalues(lm.fit))
 which.max(hatvalues(lm.fit))
 
 # Multiple Linear Regression
-lm.fit=lm(medv~lstat+age,data=Boston)
+lm.fit = lm(medv ~ lstat + age, data = Boston)
 summary(lm.fit)
-lm.fit=lm(medv~.,data=Boston) # the '.' means against everything else
+lm.fit = lm(medv ~ ., data = Boston) # the '.' means against everything else
 summary(lm.fit)
 library(car)
 vif(lm.fit)
-lm.fit1=lm(medv~.-age,data=Boston)
+lm.fit1 = lm(medv ~ . - age, data = Boston)
 summary(lm.fit1)
-lm.fit1=update(lm.fit, ~.-age)
+lm.fit1 = update(lm.fit, ~ . - age)
 
 # Interaction Terms
-summary(lm(medv~lstat:age,data=Boston))
-summary(lm(medv~lstat*age,data=Boston))
+summary(lm(medv ~ lstat:age, data = Boston))
+summary(lm(medv ~ lstat * age, data = Boston))
 
 # Non-linear Transformations of the Predictors
-lm.fit2=lm(medv~lstat+I(lstat^2)) #'I' protects lsat squared in the regression
+lm.fit2 = lm(medv ~ lstat + I(lstat^2)) #'I' protects lsat squared in the regression
 summary(lm.fit2)
-lm.fit=lm(medv~lstat)
-anova(lm.fit,lm.fit2)
-par(mfrow=c(2,2))
+lm.fit = lm(medv ~ lstat)
+anova(lm.fit, lm.fit2)
+par(mfrow = c(2, 2))
 plot(lm.fit2)
-lm.fit5=lm(medv~poly(lstat,5)) # use polymomials
+lm.fit5 = lm(medv ~ poly(lstat, 5)) # use polymomials
 summary(lm.fit5)
-summary(lm(medv~log(rm),data=Boston))
+summary(lm(medv ~ log(rm), data = Boston))
 
 # Qualitative (categorical) Predictors
 fix(Carseats)
 names(Carseats)
-lm.fit=lm(Sales~.+Income:Advertising+Price:Age,data=Carseats)
+lm.fit = lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
 summary(lm.fit) # Beware of dummy variables coded by R for categorical data (alphabetical)
 attach(Carseats)
 contrasts(ShelveLoc) # Help view categorical data
 
 # Writing User-defined Functions
-LoadLibraries=function(){
+LoadLibraries = function(){
  library(ISLR)
  library(MASS)
  print("The libraries have been loaded.")
@@ -150,24 +150,24 @@ LoadLibraries()
   
 ```R
 # Example code to fit model on training set and verify on test set
-xtr <- matrix(rnorm(100*100),ncol=100)
-xte <- matrix(rnorm(100000*100),ncol=100)
-beta <- c(rep(1,10),rep(0,90))
+xtr <- matrix(rnorm(100 * 100), ncol = 100)
+xte <- matrix(rnorm(100000 * 100), ncol = 100)
+beta <- c(rep(1, 10), rep(0, 90))
 ytr <- xtr%*%beta + rnorm(100)
 yte <- xte%*%beta + rnorm(100000)
 rsq <- trainerr <- testerr <- NULL
 for(i in 2:100){
-mod <- lm(ytr~xtr[,1:i])
-rsq <- c(rsq,summary(mod)$r.squared)
+mod <- lm(ytr ~ xtr[, 1:i])
+rsq <- c(rsq, summary(mod)$r.squared)
 beta <- mod$coef[-1]
 intercept <- mod$coef[1]
-trainerr <- c(trainerr, mean((xtr[,1:i]%*%beta+intercept - ytr)^2))
-testerr <- c(testerr, mean((xte[,1:i]%*%beta+intercept - yte)^2))
+trainerr <- c(trainerr, mean((xtr[, 1:i]%*%beta + intercept - ytr)^2))
+testerr <- c(testerr, mean((xte[, 1:i]%*%beta + intercept - yte)^2))
 }
-par(mfrow=c(1,3))
-plot(2:100,rsq, xlab='Number of Variables', ylab="R Squared", log="y"); abline(v=10,col="red")
-plot(2:100,trainerr, xlab='Number of Variables’', ylab="Training Error",log="y"); abline(v=10,col="red")
-plot(2:100,testerr, xlab='Number of Variables', ylab="Test Error",log="y"); abline(v=10,col="red")
+par(mfrow = c(1, 3))
+plot(2:100, rsq, xlab = 'Number of Variables', ylab = "R Squared", log = "y"); abline(v = 10, col = "red")
+plot(2:100, trainerr, xlab = 'Number of Variables', ylab = "Training Error", log = "y"); abline(v = 10, col = "red")
+plot(2:100, testerr, xlab = 'Number of Variables', ylab = "Test Error", log = "y"); abline(v = 10, col = "red")
 ```
 
 Bias and variance tradeoff
@@ -186,3 +186,23 @@ How to split data into training and test data?
     - the sum of the errors for each sample when used as the validation sample is the CV error
     - this estimates the optimal complexity (number of covariates), which afterwards the full dataset will be refitted with this new number of covariates
   - K-fold cross-validation
+    - somehwere in the middle between the other two.
+    - divide the data into *K* folds, then evaluate test error on each of the K folds.
+    - bins are non-overlapping, often sorted in a non-random order then split into K folds
+
+```R
+# K-fold CV error estimation in R
+library(boot)
+xtr <- matrix(rnorm(100*100), ncol = 100)
+beta <- c(rep(1, 10), rep(0, 90))
+ytr <- xtr%*%beta + rnorm(100)
+cv.err <- NULL
+for(i in 2:50){
+dat <- data.frame(x = xtr[, 1:i], y = ytr)
+mod <- glm(y~., data = dat)
+cv.err <- c(cv.err, cv.glm(dat, mod, K = 6)$delta[1])
+}
+plot(2:50, cv.err, xlab = "Number of Variables",
+ylab = "6-Fold CV Error", log = "y")
+abline(v = 10, col = "red")
+```
