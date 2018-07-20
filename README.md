@@ -826,3 +826,51 @@ tune.out=tune(svm, y~., data=dat[train,], kernel="radial", ranges=list(cost=c(0.
 summary(tune.out)
 table(true=dat[-train,"y"], pred=predict(tune.out$best.model,newdata=dat[-train,]))
 ```
+
+### Batch effects
+- Steps to reduce batch effects
+  - randomize smaple run times (e.g., don't do controls first and cases second)
+  - train classification on a mixed set of samples, e.g., across institutions and blinded
+  - validate results on a independent set of samples from a different institution
+
+### Decision trees
+- different approach to non-linear modeling that is easily interpretable
+- some loss of accuracy
+- all the splits are binary splits
+- regions of the tree are determined using recursive binary splitting
+- p\*n initial splits to consider
+- tuning parameter... how many splits (i.e., how big to grow the tree?)
+  - large tree = low bias but high variance
+  - small tree = high bias but low variance
+  - common to grow a very large tree, then prune it down
+    - cost-complexity pruning
+    - alpha is a parameter that penalizes the number of nodes (i.e., complexity)
+    - alpha = 0 is the *FULL* tree
+    - larger alpha = increasingly pruned tree
+    - looks for splits that minimize *node impurity*
+    - cross-entropy and Gini index are used to grow a tree, and missclassification error is generally used to prune the tree
+    - bagging and boosting can degrease the bias and variance, respectively
+  - Bootstrap aggregation (bagging)
+    - each bootstrap replicate is a new, randomly sampled list of n pairs of observations (X and Y) with replacement
+    - this decreases the variance of our estimates at no cost really other than the computational time
+      - example workflow:  1) build 10000 bootstrap datasets of n observations and associated predictors, 2) build decision trees for each, 3) take test samples and make a prediction for each of the 10000 trees, 4) average/majority vote across predictions.
+      - bagging only really helps in very non-linear situations.  If linear, lots of bootstraps results in the orginal linear estimates
+    - bagging, however, loses interpretability, which ws an original benefit of decision trees
+  - __Random Forests__
+    - particularly useful with trees
+    - builds a large collection of de-correlated trees
+    - very good predctive performance, but limited interpretability
+    - goal is to get the pairwise corellation between trees smaller, which decreases the variance
+    - choose m < p variables at every split in the tree
+      - average the resulting B (# of variables) trees for regression
+      - take majority vote for classicification
+    - a great "out of the box" method
+    - very little tuning
+    - recommendations
+      - For regression, take *m = p/3*, and minimum node size 5
+      - For classification, take *m = p^1/2*, and minimum node size 1
+    - often only a few hundred to thousand trees are needed
+    - variable importance plots (how often a feature appears in various nodes)
+    
+    
+    
