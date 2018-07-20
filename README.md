@@ -970,3 +970,8 @@ varImpPlot(rf.boston)
 ### Stacking
 - a method to combine across models to have a better model
 - can use cross validation
+
+
+
+### Final Note:
+- to bootstrap the predictive accuracy of a model, sample observations with replacement, then use the individuals that did not make it into the the bootstrap in the test set, to avoid have the same indibiduals in both the training and test set.
