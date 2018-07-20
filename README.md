@@ -710,5 +710,119 @@ mean(knn.pred==Direction.2005)
 ```
 - discriminant analyses work especially well with >2 categories
 
-  - support vector machines (SVM)
+### Friday July 20, 2018 8:30a - 5:00p
+
+```R
+# Linear Discriminant Analysis
+library(MASS)
+lda.fit=lda(Direction~Lag1+Lag2,data=Smarket,subset=train)
+lda.fit
+plot(lda.fit)
+lda.pred=predict(lda.fit, Smarket.2005)
+names(lda.pred)
+lda.class=lda.pred$class
+table(lda.class,Direction.2005)
+mean(lda.class==Direction.2005)
+sum(lda.pred$posterior[,1]>=.5)
+sum(lda.pred$posterior[,1]<.5)
+lda.pred$posterior[1:20,1]
+lda.class[1:20]
+sum(lda.pred$posterior[,1]>.9)
+
+# K-Nearest Neighbors
+library(class)
+train.X=cbind(Lag1,Lag2)[train,]
+test.X=cbind(Lag1,Lag2)[!train,]
+train.Direction=Direction[train]
+set.seed(1)
+knn.pred=knn(train.X,test.X,train.Direction,k=1)
+table(knn.pred,Direction.2005)
+(83+43)/252
+knn.pred=knn(train.X,test.X,train.Direction,k=3)
+table(knn.pred,Direction.2005)
+mean(knn.pred==Direction.2005)
+```
+
+- All discriminant analysis (DA) techniques use all the features
+- the main difference between them are the ways the covriance matrices are estimated
+- DDA is the best method in very high dimensions (don't use LDA/QDA)
+- R package 'penalizedLDA
+
+### Support Vector Machines (SVM)
+- Fundamentally and numerically similar to logistic regression
+- draw a line/plane in each dimension that separates the two classes
+- SVM chooses the line/plane that gives the *maximum* separation between the variables
+- Margin allows you to tell ho wmuch error you can make
+- the support vectors are the few observations that are on the margin
+  - the margin is a line, which is a linear combination of betas (the separating plane is one of the largin lines)
+- But it rarely possible to separate all variables
+  - use a support vector classifier that allows for violations
+    - margin = 1 / length(beta)
+    - calculate the error of the observations that are in violations
+    - trade-off between the margin with the error
+    - sometimes even this can be too difficult
+  - in this case, a support vector machine changes it to a 3D problem using non-linear kernels
+  - a non-linear kernel is like drawing a circle to be the separating line (with margins)
+  - non-linear kernel is quite difficult in extremely high dimension
   
+```R
+# Chapter 9 Lab: Support Vector Machines
+
+# Support Vector Classifier
+set.seed(1)
+x=matrix(rnorm(20*2), ncol=2)
+y=c(rep(-1,10), rep(1,10))
+x[y==1,]=x[y==1,] + 1
+plot(x, col=(3-y))
+dat=data.frame(x=x, y=as.factor(y))
+library(e1071)
+svmfit=svm(y~., data=dat, kernel="linear", cost=10,scale=FALSE)
+plot(svmfit, dat)
+svmfit$index
+summary(svmfit)
+svmfit=svm(y~., data=dat, kernel="linear", cost=0.1,scale=FALSE)
+plot(svmfit, dat)
+svmfit$index
+set.seed(1)
+tune.out=tune(svm,y~.,data=dat,kernel="linear",ranges=list(cost=c(0.001, 0.01, 0.1, 1,5,10,100)))
+summary(tune.out)
+bestmod=tune.out$best.model
+summary(bestmod)
+xtest=matrix(rnorm(20*2), ncol=2)
+ytest=sample(c(-1,1), 20, rep=TRUE)
+xtest[ytest==1,]=xtest[ytest==1,] + 1
+testdat=data.frame(x=xtest, y=as.factor(ytest))
+ypred=predict(bestmod,testdat)
+table(predict=ypred, truth=testdat$y)
+svmfit=svm(y~., data=dat, kernel="linear", cost=.01,scale=FALSE)
+ypred=predict(svmfit,testdat)
+table(predict=ypred, truth=testdat$y)
+x[y==1,]=x[y==1,]+0.5
+plot(x, col=(y+5)/2, pch=19)
+dat=data.frame(x=x,y=as.factor(y))
+svmfit=svm(y~., data=dat, kernel="linear", cost=1e5)
+summary(svmfit)
+plot(svmfit, dat)
+svmfit=svm(y~., data=dat, kernel="linear", cost=1)
+summary(svmfit)
+plot(svmfit,dat)
+
+# Support Vector Machine
+set.seed(1)
+x=matrix(rnorm(200*2), ncol=2)
+x[1:100,]=x[1:100,]+2
+x[101:150,]=x[101:150,]-2
+y=c(rep(1,150),rep(2,50))
+dat=data.frame(x=x,y=as.factor(y))
+plot(x, col=y)
+train=sample(200,100)
+svmfit=svm(y~., data=dat[train,], kernel="radial",  gamma=1, cost=1)
+plot(svmfit, dat[train,])
+summary(svmfit)
+svmfit=svm(y~., data=dat[train,], kernel="radial",gamma=1,cost=1e5)
+plot(svmfit,dat[train,])
+set.seed(1)
+tune.out=tune(svm, y~., data=dat[train,], kernel="radial", ranges=list(cost=c(0.1,1,10,100,1000),gamma=c(0.5,1,2,3,4)))
+summary(tune.out)
+table(true=dat[-train,"y"], pred=predict(tune.out$best.model,newdata=dat[-train,]))
+```
